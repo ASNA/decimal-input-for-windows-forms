@@ -8,13 +8,13 @@ The features this code adds are:
 
 * Numeric-only input (no letters are allowed.) 
 * A single minus sign (-) may be entered, but it must be at the start of the number.
-* A single decimal point is allowed.
-* Decimal digits input is limited to the number of decimals specified.
-* Special keyboard control keystrokes (such as the tab and backspace key) are allowed. 
 * The decimal length is set explicitly, and enforced, for each TextBox.
+* A single decimal point is allowed (if the decimal length is not zero). 
+* Decimal digits input is limited to the number of decimals specified (if the decimal length is zero). 
+* Special keyboard control keystrokes (such as the tab and backspace key) are allowed. 
 * The decimal separator is the default culture-specific decimal separator.
 
-> The TextBox control has a TextAlign prroperty. Setting this property to `Right` for numeric input works well with this technique.
+> The TextBox control has a `TextAlign` prroperty. Setting this property to `Right` for numeric input works well with this technique.
 
 The GIF below shows this numeric formatting in action.
 
@@ -22,7 +22,7 @@ The GIF below shows this numeric formatting in action.
 
 ### Hooking things up 
 
-To register a TextBox to this code, use the provided `RegisterTextBoxForFormattedInput` method like this: 
+To register a TextBox to this code, use the provided `RegisterTextBoxForFormattedInput` method like this from your form's `Load` event handler: 
 
     RegisterTextBoxForFormattedInput(textBox1, 2) 
 
@@ -35,7 +35,7 @@ Add these two `Using` statments at the top of your class:
     Using System.Globalization
     Using System.Text.RegularExpressions
 
-    <small>Figure x.y</small>
+<small>Figure 1a. The `Using` statements needed for this code.</small>
 
 And add the three subroutines below:
 
@@ -54,8 +54,9 @@ And add the three subroutines below:
                    HandlerSr(FormatNumericOnLostFocus)
     EndSr
     
+<small>Figure 1b. This routine registers TextBox for formatted input.</small>
 
-<small>Figure 1a. This routine registers TextBox for formatted input.</small>
+Call `RegisterTextBoxForFormattedInput` once for each TextBox that needs this numeric formatting.
 
     BegSr AllowOnlyNumericAndDecimalInput Access(*Private)    DclSrParm sender Type(*Object)
         DclSrParm e Type(System.Windows.Forms.KeyPressEventArgs)
@@ -114,7 +115,7 @@ And add the three subroutines below:
         EndIf 
     EndSr
 
-<small>Figure 1b. This routine filters input characters for the TextBox.</small>    
+<small>Figure 1c. This routine filters input characters for the TextBox.</small>    
 
     BegSr FormatNumericOnLostFocus Access(*Private) 
         DclSrParm sender Type(*Object)
@@ -146,4 +147,4 @@ And add the three subroutines below:
                                     CultureInfo.InvariantCulture)
     EndSr
 
-<small>Figure 1c. This routine sets the value displayed in the TextBox when it loses focus.</small>
+<small>Figure 1d. This routine sets the value displayed in the TextBox when it loses focus.</small>

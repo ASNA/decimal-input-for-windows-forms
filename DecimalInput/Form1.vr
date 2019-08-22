@@ -1,0 +1,253 @@
+﻿Using System
+Using System.Collections
+Using System.ComponentModel
+Using System.Data
+Using System.Drawing
+Using System.Text
+Using System.Windows.Forms
+Using System.Globalization
+Using System.Text.RegularExpressions
+
+//Using System.Media
+//
+//            SystemSounds.Beep.Play()  
+
+BegClass Form1 Extends(System.Windows.Forms.Form) Access(*Public) Partial(*Yes)
+
+	/region Default Constructor
+	
+	BegConstructor Access(*Public)
+		//
+		// Required for Windows Form Designer support
+		//
+		InitializeComponent()
+
+		//
+		// TODO: Add any constructor code after InitializeComponent call
+		//
+	EndConstructor
+
+	/endregion
+
+	BegSr Form1_Load Access(*Private) Event(*this.Load)
+		DclSrParm sender *Object
+		DclSrParm e System.EventArgs
+
+        // Call this for as many textboxes as neccessary.
+        RegisterTextBoxForFormattedInput(textBox1, 2) 
+	EndSr
+
+	BegSr button1_Click Access(*Private) Event(*this.button1.Click)
+		DclSrParm sender Type(*Object)
+		DclSrParm e Type(System.EventArgs)
+       
+        // Be sure to include enough decimals in your 
+        // declaration so as to not truncate any decimal places.
+        DclFld Target Type(*Packed) Len(12,2)
+
+        // To convert the input value to *Packed value in 
+        // AVR for .NET, you only need to assign its Text 
+        // property to a *Packed field.
+        Target = textBox1.Text
+
+        MsgBox Target 
+	EndSr
+
+    BegSr RegisterTextBoxForFormattedInput
+        DclSrParm tb Type(System.Windows.Forms.TextBox) 
+        DclSrParm MaxDecimalPlaces Type(*Integer4) 
+
+        tb.Tag =  MaxDecimalPlaces 
+
+        AddHandler SourceObject(tb) + 
+                   SourceEvent(keypress) +
+                   HandlerSr(AllowOnlyNumericAndDecimalInput)
+
+        AddHandler SourceObject(tb) + 
+                   SourceEvent(leave) +
+                   HandlerSr(FormatNumericOnLostFocus)
+    EndSr
+
+	BegSr AllowOnlyNumericAndDecimalInput Access(*Private) //keypress
+		DclSrParm sender Type(*Object)
+		DclSrParm e Type(System.Windows.Forms.KeyPressEventArgs)
+
+        DclFld nfi Type(NumberFormatInfo)
+        DclFld DecimalSeparator Type(*String) Inz('')
+        DclFld AllowableCharacters Type(*String) 
+        DclFld DecimalDigitsPattern Type(*String) 
+        DclFld MaxDecimalPlaces Type(*Integer4) Inz(2) 
+
+        If (sender *As TextBox).Tag.ToString() <> '0'
+            // Get the decimal separator for the current culture.        
+            nfi = CultureInfo.CurrentCulture.NumberFormat 
+            // Or if you need to get the decimal separater for 
+            // a specific culture:
+            DecimalSeparator = nfi.NumberDecimalSeparator
+        EndIf
+            
+        // Define allowable input characters. 
+        AllowableCharacters = '0123456789-' + DecimalSeparator 
+
+        //DecimalDigitsPattern = '\.\d{2}$'
+        If (sender *As TextBox).Tag <> *Nothing 
+            MaxDecimalPlaces = (sender *As TextBox).Tag.ToString()
+        EndIf
+        DecimalDigitsPattern = String.Format('\{0}\d{{{1}}}$', +
+                                             DecimalSeparator, +
+                                             MaxDecimalPlaces) 
+
+        // Allow only control characters (eg backspace) 
+        // and ALLOWABLE_CHARACTERS.
+        If NOT System.Char.IsControl(e.KeyChar) AND + 
+           NOT AllowableCharacters.Contains(e.KeyChar.ToString()) 
+            e.Handled = *True 
+        EndIf 
+        
+        // Allow only one decimal point and one minus sign.
+        If e.KeyChar = DecimalSeparator  AND +
+           (sender *As TextBox).Text.Contains(DecimalSeparator) OR +
+           (e.KeyChar = '-' AND (sender *As TextBox).Text.Contains('-'))
+            e.Handled = *True
+        EndIf
+
+        // If minus sign is present make sure it is at the 
+        // beginning of the input.
+        If e.KeyChar.ToString() = '-' AND +  
+           NOT (sender *As TextBox).Text = String.Empty
+           e.Handled = *True
+        EndIf             
+            
+        // Ensure that the maximum number of decimal places isn't 
+        // exceeded. 
+        If char.IsDigit(e.KeyChar) AND +
+           (sender *As TextBox).Text.Contains('.') AND + 
+           Regex.Match((sender *As TextBox).Text, +
+                       DecimalDigitsPattern).Success   
+            e.Handled = *True
+        EndIf 
+	EndSr
+    
+	BegSr FormatNumericOnLostFocus Access(*Private) 
+		DclSrParm sender Type(*Object)
+		DclSrParm e Type(System.EventArgs)
+    
+        DclFld ValueEntered Type(*Packed) Len(16,12)
+        DclFld MaxDecimalPlaces Type(*Integer4) Inz(2) 
+        DclFld NumericFormattingString Type(*String)
+        
+        If (sender *As TextBox).Tag <> *Nothing 
+            MaxDecimalPlaces = (sender *As TextBox).Tag.ToString()
+        EndIf
+
+        // The "magic" Fx (where x is the number of decimal places)
+        // used in the ToString() method below is .NET numeric
+        // formatting parlance for fixed-decimal with MaxDecimalPlaces 
+        // places. 
+        // Click this Microsoft link to learn more about numeric formatting.
+        // https://t.ly/e9jkr
+        // If MaxDecimalPlaces = 2 this resolves to 
+        // NumericFormattingString = 'F2'
+
+        NumericFormattingString = String.Format('F{0}', MaxDecimalPlaces) 
+        
+        ValueEntered = (sender *As TextBox).Text
+
+        (sender *As TextBox).Text = +
+              ValueEntered.ToString(NumericFormattingString, +
+                                    CultureInfo.InvariantCulture)
+	EndSr
+
+    	
+//    BegSr RegisterTextBoxForFormattedInput
+//        DclSrParm tb Type(System.Windows.Forms.TextBox) 
+//        DclSrParm MaxDecimalPlaces Type(*Integer4) 
+//
+//        tb.Tag =  MaxDecimalPlaces 
+//
+//        AddHandler SourceObject(tb) + 
+//                   SourceEvent(keypress) +
+//                   HandlerSr(AllowOnlyNumericAndDecimalInput)
+//
+//        AddHandler SourceObject(tb) + 
+//                   SourceEvent(leave) +
+//                   HandlerSr(FormatNumericOnLostFocus)
+//    EndSr
+//
+//	BegSr AllowOnlyNumericAndDecimalInput Access(*Private) //keypress
+//		DclSrParm sender Type(*Object)
+//		DclSrParm e Type(System.Windows.Forms.KeyPressEventArgs)
+//
+//        DclFld nfi Type(NumberFormatInfo)
+//        DclFld DecimalSeparator Type(*String) 
+//        DclFld AllowableCharacters Type(*String) 
+//        DclFld DecimalDigitsPattern Type(*String) 
+//        DclFld MaxDecimalPlaces Type(*Integer4) Inz(2) 
+//
+//        // Get the decimal separator for the current culture.        
+//        nfi = CultureInfo.CurrentCulture.NumberFormat 
+//        // Or if you need to get the decimal separater for a specific culture:
+//        DecimalSeparator = nfi.NumberDecimalSeparator
+//
+//        // Define allowable input characters. 
+//        AllowableCharacters = '0123456789-' + DecimalSeparator 
+//
+//        //DecimalDigitsPattern = '\.\d{2}$'
+//        If (sender *As TextBox).Tag <> *Nothing 
+//            MaxDecimalPlaces = (sender *As TextBox).Tag.ToString()
+//        EndIf
+//        DecimalDigitsPattern = String.Format('\{0}\d{{{1}}}$', +
+//                                             DecimalSeparator, MaxDecimalPlaces) 
+//
+//        // Allow only control characters (eg backspace) and ALLOWABLE_CHARACTERS.
+//        If NOT System.Char.IsControl(e.KeyChar) AND + 
+//           NOT AllowableCharacters.Contains(e.KeyChar.ToString()) 
+//            e.Handled = *True 
+//        EndIf 
+//        
+//        // Allow only one decimal point and one minus sign.
+//        If e.KeyChar = DecimalSeparator  AND (sender *As TextBox).Text.Contains(DecimalSeparator) OR +
+//           e.KeyChar = '-' AND (sender *As TextBox).Text.Contains('-') 
+//            e.Handled = *True
+//        EndIf
+//
+//        // If minus sign is present make sure it is at the beginning of the input.
+//        If e.KeyChar.ToString() = '-' AND +  
+//           NOT (sender *As TextBox).Text = String.Empty
+//           e.Handled = *True
+//        EndIf             
+//            
+//        // Ensure that the maximum number of decimal places isn't exceeded. 
+//        If char.IsDigit(e.KeyChar) AND +
+//           (sender *As TextBox).Text.Contains('.') AND + 
+//           Regex.Match((sender *As TextBox).Text, DecimalDigitsPattern).Success   
+//            e.Handled = *True
+//        EndIf 
+//	EndSr
+//	
+//	BegSr FormatNumericOnLostFocus Access(*Private) 
+//		DclSrParm sender Type(*Object)
+//		DclSrParm e Type(System.EventArgs)
+//    
+//        DclFld ValueEntered Type(*Packed) Len(16,12)
+//        DclFld MaxDecimalPlaces Type(*Integer4) Inz(2) 
+//        DclFld NumericFormattingString Type(*String)
+//        
+//        If (sender *As TextBox).Tag <> *Nothing 
+//            MaxDecimalPlaces = (sender *As TextBox).Tag.ToString()
+//        EndIf
+//
+//        // The "magic" Fx (where x is the number of decimal places)
+//        // used in the ToString() method below is .NET numeric
+//        // formatting parlance for fixed-decimal with MaxDecimalPlaces places. 
+//        // https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-numeric-format-strings
+//        // If MaxDecimalPlaces = 2 this resolves to NumericFormattingString = 'F2'
+//        NumericFormattingString = String.Format('F{0}', MaxDecimalPlaces) 
+//        
+//        ValueEntered = (sender *As TextBox).Text
+//
+//        (sender *As TextBox).Text = ValueEntered.ToString(NumericFormattingString, CultureInfo.InvariantCulture)
+//	EndSr
+	
+
+EndClass

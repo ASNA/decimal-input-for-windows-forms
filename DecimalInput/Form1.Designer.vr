@@ -7,16 +7,17 @@
 		*this.textBox1 = *new System.Windows.Forms.TextBox()
 		*this.fileSystemWatcher1 = *new System.IO.FileSystemWatcher()
 		*this.label1 = *new System.Windows.Forms.Label()
+		*this.textBox2 = *new System.Windows.Forms.TextBox()
 		(*this.fileSystemWatcher1 *As System.ComponentModel.ISupportInitialize).BeginInit()
 		*this.SuspendLayout()
 		//
 		//button1
 		//
 		*this.button1.Font = *new System.Drawing.Font("Microsoft Sans Serif", 14, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (0 *As System.Byte))
-		*this.button1.Location = *new System.Drawing.Point(61I, 126I)
+		*this.button1.Location = *new System.Drawing.Point(61I, 192I)
 		*this.button1.Name = "button1"
 		*this.button1.Size = *new System.Drawing.Size(165I, 42I)
-		*this.button1.TabIndex = 1I
+		*this.button1.TabIndex = 2I
 		*this.button1.Text = "Show value"
 		*this.button1.UseVisualStyleBackColor = *True
 		//
@@ -45,11 +46,22 @@
 		*this.label1.TabIndex = 3I
 		*this.label1.Text = "Formatted numeric input"
 		//
+		//textBox2
+		//
+		*this.textBox2.Font = *new System.Drawing.Font("Microsoft Sans Serif", 14, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (0 *As System.Byte))
+		*this.textBox2.Location = *new System.Drawing.Point(60I, 130I)
+		*this.textBox2.Name = "textBox2"
+		*this.textBox2.Size = *new System.Drawing.Size(165I, 29I)
+		*this.textBox2.TabIndex = 1I
+		*this.textBox2.Tag = "0"
+		*this.textBox2.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
+		//
 		//Form1
 		//
 		*this.AutoScaleDimensions = *new System.Drawing.SizeF(6, 13)
 		*this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-		*this.ClientSize = *new System.Drawing.Size(284I, 205I)
+		*this.ClientSize = *new System.Drawing.Size(284I, 289I)
+		*this.Controls.Add(*this.textBox2)
 		*this.Controls.Add(*this.label1)
 		*this.Controls.Add(*this.textBox1)
 		*this.Controls.Add(*this.button1)
@@ -64,6 +76,7 @@
 	DclFld textBox1 Type(System.Windows.Forms.TextBox) Access(*Private) WithEvents(*Yes)
 	DclFld fileSystemWatcher1 Type(System.IO.FileSystemWatcher) Access(*Private) WithEvents(*Yes)
 	DclFld label1 Type(System.Windows.Forms.Label) Access(*Private) WithEvents(*Yes)
+	DclFld textBox2 Type(System.Windows.Forms.TextBox) Access(*Private) WithEvents(*Yes)
 	//Required by the Windows Form Designer
 	DclFld components Type(System.ComponentModel.IContainer) Inz(*Nothing)
 	

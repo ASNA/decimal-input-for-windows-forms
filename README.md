@@ -169,6 +169,6 @@ Call `RegisterTextBoxForFormattedInput` once for each TextBox that needs this nu
 
 <small>Figure 1d. This routine sets the value displayed in the TextBox when it loses focus.</small>
 
-An enterprising programmer would look at this code and think it's silly to add these subroutines in *every* stinkin' form. And that is a correct observation. It would be far better to park this code in a class library (where it would then be available as a DLL to any program that needed it) or, even better to subclass the TextBox control using this code to customize its input capabilities. Either of these would be better than cutting and pasting these suboroutines into your every routine. 
+An enterprising programmer would look at this code and think it's silly to add these subroutines to *every* stinkin' form that needs formatted input. That is a correct observation. It would be far better to park this code in a class library (where it would then be available as a DLL to any program that needed it) or, even better, to subclass the TextBox control using this code to customize its input capabilities. Either of these would be better than cutting and pasting these subroutines into your every form's code-behind.
 
-However, for the sake of this article, adding how to do one of those two things is beyond its scope. Resolving the cut-and-paste issue is a challenge left to the reader! 
+However, for the sake of this article, adding how to do either of those two things is beyond its scope. Resolving the cut-and-paste issue is a challenge left to the reader! 
